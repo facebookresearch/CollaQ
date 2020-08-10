@@ -1,0 +1,23 @@
+Metadata-Version: 1.0
+Name: SMAC
+Version: 0.1.0b1
+Summary: SMAC - StarCraft Multi-Agent Challenge.
+Home-page: https://github.com/oxwhirl/smac
+Author: WhiRL
+Author-email: mikayel@samvelyan.com
+License: MIT License
+Description: SMAC - StarCraft Multi-Agent Challenge
+        
+        SMAC offers a diverse set of decentralised micromanagement challenges based on
+        StarCraft II game. In these challenges, each of the units is controlled by an
+        independent, learning agent that has to act based only on local observations,
+        while the opponent's units are controlled by the built-in StarCraft II AI.
+        
+        The accompanying paper which outlines the motivation for using SMAC as well as
+        results using the state-of-the-art deep multi-agent reinforcement learning
+        algorithms can be found at https://www.arxiv.link
+        
+        Read the README at https://github.com/oxwhirl/smac for more information.
+        
+Keywords: StarCraft,Multi-Agent Reinforcement Learning
+Platform: UNKNOWN

@@ -1,10 +1,11 @@
 ## Installation instructions
-The requirements.txt file can be used to install the necessary packages into a virtual environment with python == 3.6.0 (not recomended). This requires adding:
+The requirements.txt file can be used to install the necessary packages into a virtual environment with python == 3.6.0 (not recomended).
+
+Install the new sacred version,
 ```
-if ',' in value:
-    value = list(filter(None, [x.strip() for x in value.split(',')]))
+cd sacred
+python setup.py install
 ```
-To sacred/argparser.py line 111
 
 Install the new smac version.
 ```

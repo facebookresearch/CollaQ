@@ -84,6 +84,10 @@ python -m pysc2.bin.play --norender --rgb_minimap_size 0 --replay NAME.SC2Replay
 
 **Note:** Replays cannot be watched using the Linux version of StarCraft II. Please use either the Mac or Windows version of the StarCraft II client.
 
+## Acknowledgement
+
+Our vanilla RL algorithm is based on [PyMARL](https://github.com/oxwhirl/pymarl), which is an open source implementation of algorithms in StarCraft II.
+
 ## License
 
-Code licensed under the Apache License v2.0
+This code is under the CC-BY-NC 4.0 (Attribution-NonCommercial 4.0 International) license.

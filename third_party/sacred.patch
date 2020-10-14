@@ -1,0 +1,170 @@
+diff --git a/sacred/arg_parser.py b/sacred/arg_parser.py
+index ba564fa..558e1d0 100644
+--- a/sacred/arg_parser.py
++++ b/sacred/arg_parser.py
+@@ -64,6 +64,8 @@ def get_config_updates(updates):
+         if sep == "=":
+             path = path.strip()  # get rid of surrounding whitespace
+             value = value.strip()  # get rid of surrounding whitespace
++            if ',' in value:
++                value = list(filter(None, [x.strip() for x in value.split(',')]))
+             set_by_dotted_path(config_updates, path, _convert_value(value))
+         else:
+             named_configs.append(path)
+diff --git a/sacred/observers/file_storage.py b/sacred/observers/file_storage.py
+index 9bf15db..3ab9a5e 100644
+--- a/sacred/observers/file_storage.py
++++ b/sacred/observers/file_storage.py
+@@ -192,6 +192,7 @@ class FileStorageObserver(RunObserver):
+     def save_json(self, obj, filename):
+         with open(os.path.join(self.dir, filename), "w") as f:
+             json.dump(flatten(obj), f, sort_keys=True, indent=2)
++            f.flush()
+ 
+     def save_file(self, filename, target_name=None):
+         target_name = target_name or os.path.basename(filename)
+diff --git a/sacred/observers/sql_bases.py b/sacred/observers/sql_bases.py
+index d5d53c4..2c73070 100644
+--- a/sacred/observers/sql_bases.py
++++ b/sacred/observers/sql_bases.py
+@@ -39,6 +39,27 @@ class Source(Base):
+         return {"filename": self.filename, "md5sum": self.md5sum}
+ 
+ 
++class Repository(Base):
++    __tablename__ = "repository"
++
++    @classmethod
++    def get_or_create(cls, url, commit, dirty, session):
++        instance = (
++            session.query(cls).filter_by(url=url, commit=commit, dirty=dirty).first()
++        )
++        if instance:
++            return instance
++        return cls(url=url, commit=commit, dirty=dirty)
++
++    repository_id = sa.Column(sa.Integer, primary_key=True)
++    url = sa.Column(sa.String(2048))
++    commit = sa.Column(sa.String(40))
++    dirty = sa.Column(sa.Boolean)
++
++    def to_json(self):
++        return {"url": self.url, "commit": self.commit, "dirty": self.dirty}
++
++
+ class Dependency(Base):
+     __tablename__ = "dependency"
+ 
+@@ -138,6 +159,13 @@ experiment_source_association = sa.Table(
+     sa.Column("source_id", sa.Integer, sa.ForeignKey("source.source_id")),
+ )
+ 
++experiment_repository_association = sa.Table(
++    "experiments_repositories",
++    Base.metadata,
++    sa.Column("experiment_id", sa.Integer, sa.ForeignKey("experiment.experiment_id")),
++    sa.Column("repository_id", sa.Integer, sa.ForeignKey("repository.repository_id")),
++)
++
+ experiment_dependency_association = sa.Table(
+     "experiments_dependencies",
+     Base.metadata,
+@@ -167,11 +195,20 @@ class Experiment(Base):
+             Source.get_or_create(s, md5sum, session, ex_info["base_dir"])
+             for s, md5sum in ex_info["sources"]
+         ]
++        repositories = set()
++        for r in ex_info["repositories"]:
++            repository = Repository.get_or_create(
++                r["url"], r["commit"], r["dirty"], session
++            )
++            session.add(repository)
++            repositories.add(repository)
++        repositories = list(repositories)
+ 
+         return cls(
+             name=name,
+             dependencies=dependencies,
+             sources=sources,
++            repositories=repositories,
+             md5sum=md5,
+             base_dir=ex_info["base_dir"],
+         )
+@@ -183,6 +220,9 @@ class Experiment(Base):
+     sources = sa.orm.relationship(
+         "Source", secondary=experiment_source_association, backref="experiments"
+     )
++    repositories = sa.orm.relationship(
++        "Repository", secondary=experiment_repository_association, backref="experiments"
++    )
+     dependencies = sa.orm.relationship(
+         "Dependency", secondary=experiment_dependency_association, backref="experiments"
+     )
+@@ -192,6 +232,7 @@ class Experiment(Base):
+             "name": self.name,
+             "base_dir": self.base_dir,
+             "sources": [s.to_json() for s in self.sources],
++            "repositories": [r.to_json() for r in self.repositories],
+             "dependencies": [d.to_json() for d in self.dependencies],
+         }
+ 
+diff --git a/sacred/stdout_capturing.py b/sacred/stdout_capturing.py
+index ff9f948..cec665f 100644
+--- a/sacred/stdout_capturing.py
++++ b/sacred/stdout_capturing.py
+@@ -116,12 +116,14 @@ def tee_output_python():
+ @contextmanager
+ def tee_output_fd():
+     """Duplicate stdout and stderr to a file on the file descriptor level."""
+-    with NamedTemporaryFile(mode="w+") as target:
++    get_temp_file = lambda: NamedTemporaryFile(mode="w+", newline="") \
++        if sys.version_info >= (3,) else NamedTemporaryFile(mode="w+")
++    with get_temp_file() as target:
+         original_stdout_fd = 1
+         original_stderr_fd = 2
+         target_fd = target.fileno()
+ 
+-        # Save a copy of the original stdout and stderr file descriptors
++        # Save a copy of the original stdout and stderr file descriptors)
+         saved_stdout_fd = os.dup(original_stdout_fd)
+         saved_stderr_fd = os.dup(original_stderr_fd)
+ 
+diff --git a/tests/test_observers/test_sql_observer.py b/tests/test_observers/test_sql_observer.py
+index fcec0cd..9229e97 100644
+--- a/tests/test_observers/test_sql_observer.py
++++ b/tests/test_observers/test_sql_observer.py
+@@ -50,7 +50,13 @@ def sql_obs(session, engine):
+ 
+ @pytest.fixture
+ def sample_run():
+-    exp = {"name": "test_exp", "sources": [], "dependencies": [], "base_dir": "/tmp"}
++    exp = {
++        "name": "test_exp",
++        "sources": [],
++        "repositories": [],
++        "dependencies": [],
++        "base_dir": "/tmp",
++    }
+     host = {
+         "hostname": "test_host",
+         "cpu": "Intel",
+diff --git a/tests/test_stdout_capturing.py b/tests/test_stdout_capturing.py
+index 697eff3..0497c0c 100644
+--- a/tests/test_stdout_capturing.py
++++ b/tests/test_stdout_capturing.py
+@@ -33,6 +33,7 @@ def test_fd_tee_output(capsys):
+         "captured stderr",
+         "stdout from C",
+         "and this is from echo",
++        "keep\rcarriage\rreturns",
+     }
+ 
+     capture_mode, capture_stdout = get_stdcapturer("fd")
+@@ -43,6 +44,7 @@ def test_fd_tee_output(capsys):
+         with capture_stdout() as out:
+             print("captured stdout")
+             print("captured stderr", file=sys.stderr)
++            print("keep\rcarriage\rreturns")
+             output += out.get()
+             libc.puts(b"stdout from C")
+             libc.fflush(None)

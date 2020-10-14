@@ -1,0 +1,6 @@
+[submodule "third_party/smac"]
+	path = third_party/smac
+	url = https://github.com/oxwhirl/smac.git
+[submodule "third_party/sacred"]
+	path = third_party/sacred
+	url = https://github.com/IDSIA/sacred.git

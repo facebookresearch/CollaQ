@@ -1,3 +1,22 @@
+## Overview
+CollaQ, a novel decomposition and regularization technique for training multi-agent models. It achieves SoTA performance on multiple hard tasks in StarCraft II Multi-Agent Challenge.
+
+Please check our [website](https://sites.google.com/view/collaq-starcraft) for comprehensive results.
+
+3-min [video](http://yuandong-tian.com/collaQ.mp4) for paper introduction. 
+
+Please cite our paper if you use this codebase:
+
+```
+@misc{zhang2020multiagent,
+      title={Multi-Agent Collaboration via Reward Attribution Decomposition}, 
+      author={Tianjun Zhang and Huazhe Xu and Xiaolong Wang and Yi Wu and Kurt Keutzer and Joseph E. Gonzalez and Yuandong Tian},
+      year={2020},
+      eprint={2010.08531},
+      archivePrefix={arXiv}
+}
+```
+
 ## Installation instructions
 ```
 git clone git@github.com:facebookresearch/CollaQ.git
@@ -17,22 +36,6 @@ git apply ../smac.patch
 ![sc2_standard](/figures/sc2_standard.png?raw=true)
 ![sc2_vip](/figures/sc2_vip.png?raw=true)
 ![sc2_sar](/figures/sc2_sar.png?raw=true)
-
-Please check our [website](https://sites.google.com/view/collaq-starcraft) for more results.
-
-3-min [video](http://yuandong-tian.com/collaQ.mp4) for paper introduction. 
-
-Please cite our paper if you use this codebase:
-
-```
-@misc{zhang2020multiagent,
-      title={Multi-Agent Collaboration via Reward Attribution Decomposition}, 
-      author={Tianjun Zhang and Huazhe Xu and Xiaolong Wang and Yi Wu and Kurt Keutzer and Joseph E. Gonzalez and Yuandong Tian},
-      year={2020},
-      eprint={2010.08531},
-      archivePrefix={arXiv}
-}
-```
 
 
 ## Run an experiment 

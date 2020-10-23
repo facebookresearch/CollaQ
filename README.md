@@ -5,7 +5,7 @@ Please check our [website](https://sites.google.com/view/collaq-starcraft) for c
 
 3-min [video](http://yuandong-tian.com/collaQ.mp4) for paper introduction. 
 
-Please cite our paper if you use this codebase:
+Please cite our arXiv [paper](https://arxiv.org/abs/2010.08531) if you use this codebase:
 
 ```
 @misc{zhang2020multiagent,

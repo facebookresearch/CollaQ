@@ -8,12 +8,11 @@ Please check our [website](https://sites.google.com/view/collaq-starcraft) for c
 Please cite our arXiv [paper](https://arxiv.org/abs/2010.08531) if you use this codebase:
 
 ```
-@misc{zhang2020multiagent,
-      title={Multi-Agent Collaboration via Reward Attribution Decomposition}, 
-      author={Tianjun Zhang and Huazhe Xu and Xiaolong Wang and Yi Wu and Kurt Keutzer and Joseph E. Gonzalez and Yuandong Tian},
-      year={2020},
-      eprint={2010.08531},
-      archivePrefix={arXiv}
+@article{zhang2020multi,
+  title={Multi-Agent Collaboration via Reward Attribution Decomposition},
+  author={Zhang, Tianjun and Xu, Huazhe and Wang, Xiaolong and Wu, Yi and Keutzer, Kurt and Gonzalez, Joseph E and Tian, Yuandong},
+  journal={arXiv preprint arXiv:2010.08531},
+  year={2020}
 }
 ```
 

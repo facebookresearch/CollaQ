@@ -16,6 +16,8 @@ Please cite our arXiv [paper](https://arxiv.org/abs/2010.08531) if you use this 
 }
 ```
 
+**Note**: We are using SC2.4.6.2 and all baselines are run by ourselves using this version of SC2.
+
 ## Installation instructions
 ```
 git clone git@github.com:facebookresearch/CollaQ.git

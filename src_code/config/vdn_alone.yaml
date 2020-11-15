@@ -1,0 +1,29 @@
+# --- QMIX specific parameters ---
+
+# use epsilon greedy action selector
+action_selector: "epsilon_greedy"
+epsilon_start: 1.0
+epsilon_finish: 0.05
+epsilon_anneal_time: 50000
+
+runner: "episode"
+
+buffer_size: 5000
+
+# update the target network every {} episodes
+target_update_interval: 200
+
+# use the Q_Learner to train
+agent_output_type: "q"
+learner: "q_learner"
+double_q: True
+mixer: "vdn"
+
+name: "vdn_interactive"
+
+# --- Agent parameters ---
+agent: "rnn_alone" # Default rnn agent
+single_model_name: "./results/models/iql__2020-03-12_00-37-59/1982383/agent.th"
+
+# --- pymarl options ---
+mac: "basic_mac_interactive" # Basic controller

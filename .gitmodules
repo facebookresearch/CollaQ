@@ -4,3 +4,6 @@
 [submodule "third_party/sacred"]
 	path = third_party/sacred
 	url = https://github.com/IDSIA/sacred.git
+[submodule "third_party/pymarl"]
+	path = third_party/pymarl
+	url = https://github.com/oxwhirl/pymarl.git

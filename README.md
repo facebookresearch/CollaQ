@@ -31,7 +31,20 @@ cd third_party/sacred
 git apply ../sacred.patch
 cd ../smac
 git apply ../smac.patch
+cd ../pymarl
+git apply ../pymarl.patch
 ```
+Building up src folder for code
+```
+cd ../..
+cp -r third_party/pymarl/src .
+cp src_code/config/* src/config/algs/
+cp src_code/controllers/* src/controllers/
+cp src_code/learners/* src/learners/
+cp src_code/modules/* src/modules/agents/
+```
+
+
 
 ## Results
 ![sc2_standard](/figures/sc2_standard.png?raw=true)

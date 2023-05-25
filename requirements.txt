@@ -41,7 +41,7 @@ snakeviz==1.0.0
 tensorboard-logger==0.1.0
 torch
 torchvision
-tornado==5.1.1
+tornado==6.3.2
 urllib3==1.23
 websocket-client==0.53.0
 whichcraft==0.5.2
